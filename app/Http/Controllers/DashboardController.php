@@ -45,6 +45,17 @@ class DashboardController extends Controller
                     'route' => route('user.index'),
                 ],
             ];
+
+            $tableTitle = 'Peminjaman Terbaru';
+            $tableHeaders = ['Kode', 'Peminjam', 'Alat'];
+            $tableRows = Peminjaman::with(['user', 'alat'])
+                ->latest()
+                ->limit(5)
+                ->get()
+                ->map(fn ($p) => [
+                    'cols' => [$p->kode_peminjaman, $p->user->nama ?? '-', $p->alat->nama_alat ?? '-'],
+                    'status' => $p->status,
+                ]);
         } elseif ($user->role === 'petugas') {
             $cards = [
                 [
@@ -76,6 +87,18 @@ class DashboardController extends Controller
                     'route' => route('laporan.index'),
                 ],
             ];
+
+            $tableTitle = 'Pengajuan Menunggu ACC';
+            $tableHeaders = ['Kode', 'Peminjam', 'Alat'];
+            $tableRows = Peminjaman::with(['user', 'alat'])
+                ->where('status', 'menunggu')
+                ->latest()
+                ->limit(5)
+                ->get()
+                ->map(fn ($p) => [
+                    'cols' => [$p->kode_peminjaman, $p->user->nama ?? '-', $p->alat->nama_alat ?? '-'],
+                    'status' => $p->status,
+                ]);
         } else {
             $cards = [
                 [
@@ -107,8 +130,20 @@ class DashboardController extends Controller
                     'route' => route('peminjaman.saya'),
                 ],
             ];
+
+            $tableTitle = 'Peminjaman Saya Terbaru';
+            $tableHeaders = ['Kode', 'Alat', 'Batas Kembali'];
+            $tableRows = Peminjaman::with('alat')
+                ->where('user_id', $user->id)
+                ->latest()
+                ->limit(5)
+                ->get()
+                ->map(fn ($p) => [
+                    'cols' => [$p->kode_peminjaman, $p->alat->nama_alat ?? '-', $p->tgl_kembali_rencana],
+                    'status' => $p->status,
+                ]);
         }
 
-        return view('home.dashboard', compact('cards'));
+        return view('home.dashboard', compact('cards', 'tableTitle', 'tableHeaders', 'tableRows'));
     }
 }

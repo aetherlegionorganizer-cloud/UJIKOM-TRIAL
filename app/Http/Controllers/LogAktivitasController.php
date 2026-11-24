@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LogAktivitas;
+
 class LogAktivitasController extends Controller
 {
     public function index()
     {
-        return view('home.log.index');
+        $logs = LogAktivitas::latest()->paginate(15);
+
+        return view('home.log.index', compact('logs'));
     }
 }

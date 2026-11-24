@@ -24,7 +24,7 @@
               <input type="text" class="form-control" value="{{ $user->username }}" disabled />
             </div>
             <div class="mb-3">
-              <label class="form-label">Password Baru (Kosongkan jika tidak diubah)</label>
+              <label class="form-label">Password Baru</label>
               <input type="password" class="form-control" name="password" />
             </div>
             <div class="mb-3">
